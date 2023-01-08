@@ -123,11 +123,11 @@ App.get("/search", (request, response) => {
 		  request.query.q = request.query.q.toLocaleLowerCase().split();
 		  if (request.query.q.length > 0) {
 		  	// Generating the SQL search query
-		  	let sql_query = `SELECT * FROM Users WHERE `;
+		  	let sql_query = `SELECT * FROM Users WHERE id != ${request.session.user_id} AND (`;
 		  	for (let i = 0; i < request.query.q.length; i++) {
 		  		sql_query += `LOWER(name) LIKE "%${request.query.q[i]}%" OR LOWER(city) LIKE "%${request.query.q[i]}%" OR LOWER(state) LIKE "%${request.query.q[i]}%" OR LOWER(bio) LIKE "%${request.query.q[i]}%"`;
 		  		if (request.query.q[i+1] == null)
-		  			sql_query += `;`;
+		  			sql_query += `);`;
 		  		else
 		  			sql_query += ` OR `;
 		  	}
