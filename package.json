@@ -1,0 +1,17 @@
+{
+  "name": "circle_of_roomies",
+  "version": "1.0.0",
+  "description": "This app facilitates the fresher students to find an appropriate and suitable room mate for themselves with whom they can be comfortable to settle with.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "author": "Shubham Singh, Siddhi Singh, Rishav Das",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^8.0.2"
+  }
+}

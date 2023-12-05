@@ -1,0 +1,5 @@
+# ----
+# The GITIGNORE file
+# ----
+
+node_modules/
