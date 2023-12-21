@@ -10,10 +10,7 @@ Author: Rishav Das (github.com/r1shavd/)
 const Express = require("express");
 const ExpressSession = require("express-session");
 const BodyParser = require("body-parser");
-
-// Importing the DB related modules
-const Mongoose = require("mongoose");
-const { Users, UserLogs, ContactRequests, Ratings } = require("./Models");
+const Sqlite3 = require("sqlite3");
 
 // Creating the Express.js powered app object and configuring it for using EJS rendering as well handling HTTP POST request data well
 const App = Express();
@@ -22,6 +19,17 @@ App.use(BodyParser.urlencoded({ extended: true }));
 App.use(BodyParser.json());
 App.use(ExpressSession({secret: '15265126735vdfghdsf35hgdfhgsdf53624', resave: true, saveUninitialized: true}));
 App.use(Express.static("static")); // Configuring the static files (CSS, JS, Media)
+
+// Connecting to the databse
+const DbConnection = new Sqlite3.Database("database.db", (error) => {
+	if (error) {
+		// If there occurs an error
+		console.log("[!] Failed to connect to the database");
+		console.log(error);
+	} else {
+		console.log("[#] Connected to the database")
+	}
+});
 
 // Defining the endpoints
 // Defining the HTTP GET request endpoints
@@ -51,172 +59,115 @@ App.get("/login", (request, response) => {
 });
 //
 App.get("/profile", (request, response) => {
-	// Getting the query data
+	// Getting the user id if mentioned
 	const profile_id = request.query.id;
-	if (profile_id == undefined) {
-		// Loading current 24 profiles
-		let doc = [];
-		return response.render("profile", { data: {
-			user_id: request.session.user_id,
-			multiple: true,
-			profiles: doc,
-		} });
-	} else {
-		// Loading the current specified profile
-		let doc = {};
-		Users.findOne({ _id : profile_id }).then((data) => {
-			if (!data) {
+	if (profile_id) {
+		// Loading the data of the particular user
+		DbConnection.get("SELECT * FROM Users WHERE id = ?;", [profile_id], (error, row) => {
+			if (error) {
 				// If there occurs an error
-				return response.status(404);
-			} else {
-				return response.render("profile", { data: {
-					user_id: request.session.user_id,
-					multiple: false,
-					profile: data,
-				}, });
+				response.status(500);
+				return response.end("Failed to load the profile");
 			}
-		});
+			// Rendering the profile page if the profile data is loaded
+			return response.render("profile", { data: row });
+		})
 	}
 });
 //
 // Defining the HTTP POST request endpoints
 //
 App.post('/', async (request, response) => {
-	if (request.user.isLoggedIn) {
-		// If the user is logged in
-		// Checking the task specified
-		if (request.body.task == "logout") {
-			// Logging out the current user
-			request.session.isLoggedIn = false;
-			request.session.user_id = null;
-			return response.end("User logged out successfully!");
-		} else if (request.body.task == "edit-profile") {
-			// Saving the user with updated data
-			 Users.findByIdAndUpdate(request.session._id, {
-			 	 name: request.body.name,
-			 	 email: request.body.email,
-			  	 bio: request.body.bio,
-			 	 addr: reqeust.body.addr,
-				 insta_username: request.body.insta_username,
-			}, (error, data) => {
-				if (error) {
-					// If there occurs an error
-					return response.end("Failed to update the user information.");
-				} else {
-					// If there occurs no error
-					return response.end("Updated the user information successfully");
-				}
-			});
-		} else if (request.body.task == "delete-profile") {
-			// Deleting the user profile as well all the data that are associated with the user
-			Users.findByIdAndDelete(request.session.user_id, (error, result) => {
-				if (error) {
-					// If there occurs an error
-					return response.end("Failed to delete the user profile");
-				} else {
-					UserLogs.deleteMany({ user_id: reqeust.session.user_id, }, (error, result) => {
-						if (error) {
-							// If there occurs an error
-							return response.end("Failed to delete the user data");
-						} else {
-							// If there occurs no error
-							return response.end("User profile and data deleted successfully!");
-						}
-					});
-				}
-			});
-		} else if (request.body.task == "rate") {
-			// Getting the rating details and inserting into the database
-			let doc = new Ratings({
-				user_id: request.session.user_id,
-				score: request.body.score,
-				desc: request.body.desc,
-			});
-			await doc.save().then(() => {
-				return response.end("Review added successfully!");
-			}).catch((error) => {
-				// If there occurs an error
-				return response.end(error);
-			});
-		} else if (request.body.task == "contact-request") {
-			// Adding the contact request to the database
-			let doc = new ContactRequests({
-				name: request.body.name,
-				ip_addr: "",
-				msg: request.body.msg,
-			});
-			await doc.save().then(() => {
-				return response.end("Message sent successfully!")
-			}).catch((error) => {
-				// If there occurs an error
-				return response.end(error);
-			});
-		} else {
-			return response.end("Task not specified!");
-		}
-	} else {
+	if (!request.session.isLoggedIn) {
 		// If the user isn't logged in
-		response.status(403)
-		return response.end("Forbidden!");
+		return response.status(403);
 	}
+
+	// Executing as per the task
+	if (request.body.task == "rating") {
+		// Getting the details of the rating
+		const score = request.body.score;
+		const content = request.body.score;
+
+		// Saving to the database
+		DbConnection.run("INSERT INTO Ratings (user_id, score, content) VALUES (?, ?, ?);", [request.session.user_id, score, content], (error) => {
+			if (error) {
+				// if there occurs an error
+				response.status(500);
+				return response.end("Database error!");
+			}
+
+			return response.end("Review sent successfully!");
+		});
+	}
+
+	// If the task is not mentioned
+	return response.end("Task not mentioned!");
 });
 //
-App.post("/login", async (request, response) => {
+App.post("/login", (request, response) => {
 	if (request.session.isLoggedIn) {
-		// Stating forbidden if user is logged in already
-		response.status(403);
-		return response.end("Forbidden");
-	} else {
-		// Checking the task specified
-		if (request.body.task == "signup") {
-			// Checking if the user with same email exists
-			Users.exists({ email: request.body.email, }).then(data => {
-				if (data != null) {
-					return response.end("User already exists with this email address, use another one or try forget password, if you lost access to your account.");
-				} else {
-					// Creating the new user
-					let doc = new Users({
-						name: request.body.name,
-						password: Encrypter.Hash(request.body.password),
-						email: request.body.email,
-						bio: request.body.bio,
-						insta_username: request.body.insta_username,
-					});
-					doc.save().then(() => {
-						request.session.isLoggedIn = true;
-						request.session.user_id = data._id;
-						return response.end("New user created successfully. You can login with the email and password.");
-					}).catch((error) => {
-						// If there occurs an error
-						return response.end(error);
-					});
-				}
-			}).catch((error) => {
-				return response.end(error);
-			});
-		} else if (request.body.task == "signin") {
-			// Getting the user information
-			Users.findOne({ email: request.body.email, }).then(data => {
-				if (data == null) {
-					// If the user doesn't exists
-					return response.end("No such user exists!");
-				} else {
-					// Checking if the password hashes match or not
-					if (data.password == Encrypter.Hash(request.body.password)) {
-						// If the password hashes match
-						request.session.isLoggedIn = true;
-						request.session.user_id = data._id;
-						return response.end("User logged in successfully!");
-					} else {
-						// If the password hashes match
-						return response.end("Incorrect password!");
-					}
-				}
-			});
-		} else {
-			return response.end("Task not specified");
-		}
+		return response.status(403);
 	}
+
+	// Verifying the user
+	const passw = Encrypter.Hash(request.body.password);
+	DbConnection.get("SELECT * FROM Users WHERE email = ?;", [request.body.email, passw], (error, row) => {
+		if (error) {
+				// If there occurs an error
+			response.status(500);
+			return response.end("Database error!");
+		}
+
+		if (!row) {
+				// If the user doesn't exists
+			return response.end("No such user found! Please check the email again.");
+		}
+
+		if (row.password == passw) {
+				// If the password matches
+			request.session.isLoggedIn = true;
+			request.session.user_id = row.id;
+			return response.end("User logged in successfully");
+		}
+	});
+});
+//
+App.post("/signup", (request, response) => {
+	if (request.session.isLoggedIn) {
+		// If the user is already logged in
+		return response.status(403);
+	}
+
+	// Creating an user account
+
+	// Checking if the an user account with same email already exists
+	DbConnection.get("SELECT COUNT(*) FROM Users WHERE email = ?", [request.body.email], (error, row) => {
+		if (error) {
+			// If there occurs an error
+			response.status(500);
+			throw error;
+			return response.end("Database error!");
+		}
+
+		if (row["COUNT(*)"] > 0) {
+			// If the user account with same email address already exists
+			return response.end("User with the same email address already exists");
+		} else {
+			// Creating the user entry in the database
+			const passw = Encrypter.Hash(request.body.password);
+			DbConnection.run("INSERT INTO Users (name, password, email, city, state) VALUES (?, ?, ?, ?, ?)", [request.body.name, passw, request.body.email, request.body.city, request.body.state], (error) => {
+				if (error) {
+					// If there occurs an error
+					response.status(500);
+					throw error;
+					return response.end("Database error!");
+				}
+
+				return response.end("Created user account successfully!");
+			});
+		}
+	});
 });
 //
 
@@ -273,15 +224,5 @@ const Encrypter = {
 }
 //
 
-// Connecting the app to the db as well as listening on port 8000
-const AppStart = async () => {
-	try {
-		console.log("[*] Connecting to the remote MongoDB");
-		await Mongoose.connect("mongodb+srv://shubham22gcebaids037:shubh4m1sg4y@cluster0.icq0f5r.mongodb.net/circle_of_roomies?retryWrites=true&w=majority");
-		App.listen(8000, () => console.log("[#] Listening on port 8000"));
-	} catch (error) {
-		console.log("[!] ", error);
-		process.exit(1);
-	}
-};
-AppStart();
+// Making the app to listen on port 3000
+App.listen(3000, () => console.log("[#] Listening on port 3000"));

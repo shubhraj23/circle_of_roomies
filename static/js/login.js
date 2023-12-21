@@ -23,22 +23,16 @@ try {
 				fetch("/login", {
 					method: "POST",
 					body: JSON.stringify({
-						task: "signin",
 						email: email,
 						password: password,
 					}),
 					headers: { "Content-type": "application/json; charset=UTF-8" },
 				}).then(response => {
 					// Dispalying the resposne via the alert
-					if (response.ok) {
-						response.text().then(response => {
-							alert(response);
-							window.location.reload();
-						})
-					} else {
-						alert("Server failure!");
+					response.text().then(response => {
+						alert(response);
 						window.location.reload();
-					}
+					});
 				}).catch(error => {
 					// Displaying the error via the alert
 					alert(error);
@@ -76,26 +70,22 @@ try {
 						// If the password entered matches with confirm password input
 			
 						// Sending the HTTP POST request
-						fetch("/login", {
+						fetch("/signup", {
 							method: "POST",
 							body: JSON.stringify({
-								task: "signup",
 								name: name,
 								email: email,
 								password: password,
+								city: document.getElementById('signup-city-input').value,
+								state: document.getElementById('signup-state-input').value,
 							}),
 							headers: { "Content-type": "application/json; charset=UTF-8" },
 						}).then(response => {
 							// Dispalying the resposne via the alert
-							if (response.ok) {
-								response.text().then(response => {
-									alert(response);
-									window.location.reload();
-								});
-							} else {
-								alert("Server failure!");
+							response.text().then(response => {
+								alert(response);
 								window.location.reload();
-							}
+							});
 						}).catch(error => {
 							// Displaying the error via the alert
 							alert(error);
