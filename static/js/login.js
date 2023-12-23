@@ -24,7 +24,7 @@ try {
 					method: "POST",
 					body: JSON.stringify({
 						email: email,
-						password: password,
+						password: Encrypter.Hash(password),
 					}),
 					headers: { "Content-type": "application/json; charset=UTF-8" },
 				}).then(response => {
@@ -75,7 +75,7 @@ try {
 							body: JSON.stringify({
 								name: name,
 								email: email,
-								password: password,
+								password: Encrypter.Hash(password),
 								city: document.getElementById('signup-city-input').value,
 								state: document.getElementById('signup-state-input').value,
 							}),

@@ -77,7 +77,7 @@ App.get("/profile", (request, response) => {
 //
 // Defining the HTTP POST request endpoints
 //
-App.post('/', async (request, response) => {
+App.post('/', (request, response) => {
 	if (!request.session.isLoggedIn) {
 		// If the user isn't logged in
 		return response.status(403);
@@ -111,21 +111,20 @@ App.post("/login", (request, response) => {
 	}
 
 	// Verifying the user
-	const passw = Encrypter.Hash(request.body.password);
-	DbConnection.get("SELECT * FROM Users WHERE email = ?;", [request.body.email, passw], (error, row) => {
+	DbConnection.get("SELECT * FROM Users WHERE email = ?;", [request.body.email], (error, row) => {
 		if (error) {
-				// If there occurs an error
+			// If there occurs an error
 			response.status(500);
 			return response.end("Database error!");
 		}
 
 		if (!row) {
-				// If the user doesn't exists
+			// If the user doesn't exists
 			return response.end("No such user found! Please check the email again.");
 		}
 
-		if (row.password == passw) {
-				// If the password matches
+		if (row.password == request.body.password) {
+			// If the password matches
 			request.session.isLoggedIn = true;
 			request.session.user_id = row.id;
 			return response.end("User logged in successfully");
@@ -155,8 +154,7 @@ App.post("/signup", (request, response) => {
 			return response.end("User with the same email address already exists");
 		} else {
 			// Creating the user entry in the database
-			const passw = Encrypter.Hash(request.body.password);
-			DbConnection.run("INSERT INTO Users (name, password, email, city, state) VALUES (?, ?, ?, ?, ?)", [request.body.name, passw, request.body.email, request.body.city, request.body.state], (error) => {
+			DbConnection.run("INSERT INTO Users (name, password, email, city, state) VALUES (?, ?, ?, ?, ?)", [request.body.name, request.body.password, request.body.email, request.body.city, request.body.state], (error) => {
 				if (error) {
 					// If there occurs an error
 					response.status(500);
@@ -169,59 +167,6 @@ App.post("/signup", (request, response) => {
 		}
 	});
 });
-//
-
-// Defining the custom functions and objects that are required
-//
-const Encrypter = {
-	Encrypt: (text, password) => {
-		// Generating key for encryption
-		let key = 0, isEven = true;
-		for (let i of password) {
-			(isEven) ? key += i.charCodeAt() : key -= i.charCodeAt();
-		}
-
-		// Encrypting the text
-		let result = "";
-		text.split('').forEach((element, index) => {
-			result += String.fromCharCode((element.charCodeAt() + key) % 256);
-		});
-		return btoa(result);
-	},
-	Decrypt: (text, password) => {
-		// Generating key for encryption
-		let key = 0, isEven = true;
-		for (let i of password) {
-			(isEven) ? key += i.charCodeAt() : key -= i.charCodeAt();
-		}
-
-		// Decrypting the text
-		text = atob(text);
-		let result = "";
-		text.split('').forEach((element, index) => {
-			if (element.charCodeAt() < key) {
-				result += String.fromCharCode((element.charCodeAt() - key + 256) % 256);
-			} else {
-				result += String.fromCharCode((element.charCodeAt() - key) % 256);
-			}
-		});
-		return result;
-	},
-	Hash: (password) => {
-		// Generating key for hashing
-		let key = 0, isEven = true;
-		for (let i of password) {
-			(isEven) ? key += i.charCodeAt() : key -= i.charCodeAt();
-		}
-
-		// Hashing the password
-		let result = "";
-		password.split('').forEach((element, index) => {
-			result += String.fromCharCode((element.charCodeAt() + key) % 256);
-		});
-		return btoa(result);
-	}
-}
 //
 
 // Making the app to listen on port 3000
