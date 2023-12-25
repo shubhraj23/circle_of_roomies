@@ -76,15 +76,16 @@ try {
 								name: name,
 								email: email,
 								password: Encrypter.Hash(password),
-								city: document.getElementById('signup-city-input').value,
-								state: document.getElementById('signup-state-input').value,
+								city: document.getElementById("signup-city-input").value,
+								state: document.getElementById("signup-state-input").value,
+								social: document.getElementById("signup-social-input").value,
 							}),
 							headers: { "Content-type": "application/json; charset=UTF-8" },
 						}).then(response => {
 							// Dispalying the resposne via the alert
 							response.text().then(response => {
 								alert(response);
-								window.location.reload();
+								window.location();
 							});
 						}).catch(error => {
 							// Displaying the error via the alert

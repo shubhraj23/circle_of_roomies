@@ -5,13 +5,14 @@
   <meta http-eqiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Circle of Roomies</title>
+  <title><%= profile.name %> - Circle of Roomies</title>
 
   <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css">
   <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
 
 </head>
 <body>
+  <!-- The navigation bar -->
   <header class="text-gray-600 body-font">
     <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
       <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
@@ -26,8 +27,14 @@
         <!-- <a href="/gallery" class="mr-5 hover:text-gray-900">Gallery</a> -->
         <a href= "/#contact-section" class="mr-5 hover:text-gray-900">Contact us</a>
       </nav>
-      <% if (data.user_id) { %>
-      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/profile?id=<%= data.user_id %>">Your profile
+      <% if ((user_id) && (user_id != profile.id)) { %>
+      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/profile?id=<%= user_id %>">Your profile
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+      <% } else if ((user_id) && (user_id == profile.id)) { %>
+      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/profile/edit">Edit profile
         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
           <path d="M5 12h14M12 5l7 7-7 7"></path>
         </svg>
@@ -41,47 +48,119 @@
       <% } %>
     </div>
   </header>
+  <!-- -->
 
- 	<!-- The main part of the page where we display the profile information of the user -->
-<section class="pt-16 bg-blueGray-50">
-<div class="w-full lg:w-4/12 px-4 mx-auto">
-  <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
-    <div class="px-6">
-      <div class="flex flex-wrap justify-center">
-        <div class="w-full px-4 flex justify-center">
-          <div class="relative">
-            <img alt="profile-picture" id="pfp" src="" class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px">
-          </div>
-        </div>
+  <!-- The main part of the page where we display the profile information of the user -->
+  <section class="pt-16 bg-blueGray-50">
+    <div class="w-full lg:w-4/12 px-4 mx-auto">
+      <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16">
+        <div class="px-6">
+          <div class="flex flex-wrap justify-center">
+            <div class="w-full px-4 flex justify-center">
+              <div class="relative">
+                <% if (profile.pfp) { %>
+                <img alt="profile-picture" id="pfp" src="/media/pfp/<%= profile.pfp %>" class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px">
+                <% } else { %>
+                <img alt="profile-picture" id="pfp" src="/media/blank_pfp.jpg" class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px">
+                <% } %>
               </div>
-      <div class="text-center mt-12">
-        <h3 class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-		<%= data.profile.name %>
-        </h3>
-        <div class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-          <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-        	<%= data.profile.addr %>
-	</div>
-        <div class="mb-2 text-blueGray-600 mt-10">
-          <i class="fa fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-	  <%= data.profile.insta_link %>
-        </div>
-      </div>
-      <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
-        <div class="flex flex-wrap justify-center">
-          <div class="w-full lg:w-9/12 px-4">
-            <p class="mb-4 text-lg leading-relaxed text-blueGray-700">
-	   <%= data.profile.bio %>
-	    </p>
-           </div>
+            </div>
+          </div>
+          <br>
+          <div class="text-center mt-20">
+            <h3 class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2"><%= profile.name %></h3>
+            <div class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
+              <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
+              <%= profile.city %>
+            </div>
+            <div class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
+              <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
+              <%= profile.state %>
+            </div>
+            <% if (profile.social_link) { %>
+            <div class="mb-2 text-blueGray-600 mt-10">
+              <i class="fa fa-briefcase mr-2 text-lg text-blueGray-400"></i>
+              <a href="<%= profile.social_link %>">
+                <% if (profile.social_link.includes("instagram.com/")) { %>
+                Connect on Instagram
+                <% } else if (profile.social_link.includes("twitter.com/")) { %>
+                Connect on Twitter
+                <% } else if (profile.social_link.includes("facebook.com/")) { %>
+                Connect on Facebook
+                <% } else if (profile.social_link.includes("linkedin.com/")) { %>
+                Connect on LinkedIn
+                <% } else if (profile.social_link.includes("wa.me/")) { %>
+                Connect on WhatsApp
+                <% } else { %>
+                Connect on other platforms
+                <% } %>
+              </a>
+            </div>
+            <% } %>
+          </div>
+          <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
+            <div class="flex flex-wrap justify-center">
+              <div class="w-full lg:w-9/12 px-4">
+                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">
+                  <% if (profile.bio) { %>
+                  <%= profile.bio %>
+                  <% } else { %>
+                  No bio set
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-</section>	
-	<!-- -->
-    <footer class="text-gray-600 body-font">
+  </section>	
+  <!-- -->
+
+  <!-- A container showing various options -->
+  <section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+      <div class="flex flex-wrap -m-4">
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/1e.jpg" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">1. Make yourself appealing</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Complete your profile.</h2>
+            <p class="leading-relaxed text-base">Finish setting up your profile, if already done, keep the profile updated for finding newer mates.       
+            </p>
+          </div>
+        </div>
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/2..png" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">2. Browse</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Look through other users' profiles.</h2>
+            <p class="leading-relaxed text-base">Take your time and browse the profiles of the users registered with us based upon your preffered location.</p>
+          </div>
+        </div>
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/3..jpeg" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">3. Reach out</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Contact the profile you're interested in.</h2>
+            <p class="leading-relaxed text-base">Once you find a profile that fits your needs, contact the person through the mentioned contact details.</p>
+          </div>
+        </div>
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/4..jpeg" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">4. It's a Match</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Voila! You've got yourself a room mate</h2>
+            <p class="leading-relaxed text-base">If everything works out well, congratulations on finding a room mate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--  -->
+
+  <!-- The footer section -->
+  <footer class="text-gray-600 body-font">
     <div class="border-t border-gray-200">
       <div class="container px-5 py-8 flex flex-wrap mx-auto items-center">
         <span class="inline-flex lg:ml-auto lg:mt-0 mt-6 w-full justify-center md:justify-start md:w-auto">
@@ -119,5 +198,7 @@
       </div>
     </div>
   </footer>
+  <!-- -->
+
 </body>
 </html>

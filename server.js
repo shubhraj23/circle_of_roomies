@@ -60,18 +60,24 @@ App.get("/login", (request, response) => {
 //
 App.get("/profile", (request, response) => {
 	// Getting the user id if mentioned
-	const profile_id = request.query.id;
-	if (profile_id) {
+	if (request.query.id) {
 		// Loading the data of the particular user
-		DbConnection.get("SELECT * FROM Users WHERE id = ?;", [profile_id], (error, row) => {
+		DbConnection.get("SELECT * FROM Users WHERE id = ?;", [request.query.id], (error, row) => {
 			if (error) {
 				// If there occurs an error
 				response.status(500);
 				return response.end("Failed to load the profile");
 			}
-			// Rendering the profile page if the profile data is loaded
-			return response.render("profile", { data: row });
-		})
+
+			if (row) {
+				// Rendering the profile page if the profile data is loaded
+				return response.render("profile", { profile: row, user_id: request.session.user_id, });
+			} else {
+				// If the user isn't found
+				response.status(404);
+				return response.end("No such user found!");
+			}
+		});
 	}
 });
 //
@@ -154,15 +160,15 @@ App.post("/signup", (request, response) => {
 			return response.end("User with the same email address already exists");
 		} else {
 			// Creating the user entry in the database
-			DbConnection.run("INSERT INTO Users (name, password, email, city, state) VALUES (?, ?, ?, ?, ?)", [request.body.name, request.body.password, request.body.email, request.body.city, request.body.state], (error) => {
+			DbConnection.run("INSERT INTO Users (name, password, email, city, state, social_link) VALUES (?, ?, ?, ?, ?, ?)", [request.body.name, request.body.password, request.body.email, request.body.city, request.body.state, request.body.social], (error) => {
 				if (error) {
 					// If there occurs an error
 					response.status(500);
 					throw error;
 					return response.end("Database error!");
+				} else {
+					return response.end("Created user account successfully! Please login with your respective email and password.");
 				}
-
-				return response.end("Created user account successfully!");
 			});
 		}
 	});
