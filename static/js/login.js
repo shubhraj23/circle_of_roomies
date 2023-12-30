@@ -85,7 +85,6 @@ try {
 							// Dispalying the resposne via the alert
 							response.text().then(response => {
 								alert(response);
-								window.location();
 							});
 						}).catch(error => {
 							// Displaying the error via the alert

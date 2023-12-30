@@ -81,12 +81,38 @@ App.get("/profile", (request, response) => {
 	}
 });
 //
+App.get("/profile/edit", (request, response) => {
+	if (request.session.isLoggedIn) {
+		// Loading the data of the particular user who is logged in
+		DbConnection.get("SELECT * FROM Users WHERE id = ?;", [request.session.user_id], (error, row) => {
+			if (error) {
+				// If there occurs an error
+				response.status(500);
+				return response.end("Failed to load the profile");
+			}
+
+			if (row) {
+				// Rendering the profile page if the profile data is loaded
+				return response.render("profile_edit", { profile: row, });
+			} else {
+				// If the user isn't found
+				response.status(404);
+				return response.end("No such user found!");
+			}
+		});
+	} else {
+		// If the user is not logged in
+		return response.redirect("/");
+	}
+});
+//
 // Defining the HTTP POST request endpoints
 //
 App.post('/', (request, response) => {
 	if (!request.session.isLoggedIn) {
 		// If the user isn't logged in
-		return response.status(403);
+		response.status(403);
+		return response.end("Forbidden!");
 	}
 
 	// Executing as per the task
@@ -170,6 +196,24 @@ App.post("/signup", (request, response) => {
 					return response.end("Created user account successfully! Please login with your respective email and password.");
 				}
 			});
+		}
+	});
+});
+//
+App.post("/profile/edit", (request, response) => {
+	if (!request.session.isLoggedIn) {
+		response.status(403);
+		return response.end("Forbidden!");
+	}
+
+	// Saving the updated information into the database
+	DbConnection.run("UPDATE Users SET name = ?, city = ?, state = ?, social_link = ?, bio = ? WHERE id = ?;", [request.body.name, request.body.city, request.body.state, request.body.social, request.body.bio, request.session.user_id], (error) => {
+		if (error) {
+			// If there occurs an error
+			response.status(500);
+			return response.end("Database error!");
+		} else {
+			return response.end("Your profile has been updated!");
 		}
 	});
 });
