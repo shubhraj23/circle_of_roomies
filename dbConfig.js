@@ -1,5 +1,5 @@
 /*
-DbConnector.js
+DbConfig.js
 
 This JS source file contains the functions and objects for connecting the express.js app to the sqlite3 db.
 

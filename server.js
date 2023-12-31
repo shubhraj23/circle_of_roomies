@@ -11,12 +11,14 @@ const Express = require("express");
 const ExpressSession = require("express-session");
 const BodyParser = require("body-parser");
 const Sqlite3 = require("sqlite3");
+const Multer = require("multer");
+const Sharp = require("sharp");
 
 // Creating the Express.js powered app object and configuring it for using EJS rendering as well handling HTTP POST request data well
 const App = Express();
 App.set("view engine", "ejs");
-App.use(BodyParser.urlencoded({ extended: true }));
-App.use(BodyParser.json());
+App.use(BodyParser.urlencoded({ extended: true, limit: "5mb", parameterLimit: 50000, }));
+App.use(BodyParser.json({ limit: "5mb", }));
 App.use(ExpressSession({secret: '15265126735vdfghdsf35hgdfhgsdf53624', resave: true, saveUninitialized: true}));
 App.use(Express.static("static")); // Configuring the static files (CSS, JS, Media)
 
@@ -30,6 +32,18 @@ const DbConnection = new Sqlite3.Database("database.db", (error) => {
 		console.log("[#] Connected to the database")
 	}
 });
+
+// Setting up the Multer middleware for images upload
+const PfpUpload = Multer({
+	fileSize: 50000,
+	fileFilter: (request, file, callback) => {
+		if (!file.originalname.match(/\.(jpg|jpeg)$/)) {
+			return callback(new Error("Profile picture file format invalid!"));
+		}
+		callback(null, true);
+	},
+})
+//
 
 // Defining the endpoints
 // Defining the HTTP GET request endpoints
@@ -216,6 +230,30 @@ App.post("/profile/edit", (request, response) => {
 			return response.end("Your profile has been updated!");
 		}
 	});
+});
+//
+App.post("/profile/pfp", PfpUpload.single("pfp"), async (request, response) => {
+	try {
+		// Uploading the file as profile picture
+		const filename = Date.now() + "user" + request.session.user_id;
+		await Sharp(request.file.buffer).resize({ width: 100, height: 100 }).jpeg().toFile(__dirname + "/static/media/pfp/" + filename);
+		console.log("file uploaded!");
+
+		// Saving the updated information in the databse
+		DbConnection.run("UPDATE Users SET pfp = ? WHERE id = ?;", [filename, request.session.user_id], (error) => {
+			if (error) {
+				// If there occurs an error
+				return response.status(500).end("Failed to update the profile picture!");
+			} else {
+				return response.end("Profile picture updated successfully!");
+			}
+		});
+	} catch (error) {
+		// If there occurs an error
+		throw error;
+		console.log("file upload failed!");
+		return response.status(500).end("Failed to update the profile picture!");
+	}
 });
 //
 
