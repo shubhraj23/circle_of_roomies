@@ -51,14 +51,10 @@ const PfpUpload = Multer({
 App.get('/', (request, response) => {
 	if (request.session.isLoggedIn) {
 		// If the user is logged in
-		return response.render("index", { data: {
-			user_id: request.session.user_id,
-		} });
+		return response.render("index", { user_id: request.session.user_id, });
 	} else {
 		// If the user isnt logged in
-		return response.render("index", { data: {
-			user_id: false,
-		} });
+		return response.render("index", { user_id: false, });
 	}
 });
 // 
@@ -117,6 +113,23 @@ App.get("/profile/edit", (request, response) => {
 	} else {
 		// If the user is not logged in
 		return response.redirect("/");
+	}
+});
+//
+App.get("/search", (request, response) => {
+	if (request.session.isLoggedIn) {
+		// If the user is logged in, we continue
+
+		// Checking if the search query is provided or not
+		if (request.query.q) {
+		  // Searching in the database using the query provided
+			request.query.q = request.query.q.split();
+		} else {
+			return response.render("search", { results: null, user_id: request.session.user_id, });
+		}
+	} else {
+		// If the user isn't logged in
+		return response.render("search", { results: null, user_id: request.session.user_id, });
 	}
 });
 //

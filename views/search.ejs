@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-eqiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Circle of Roomies</title>
+
+</head>
+<body>
+  <!-- The navigation bar -->
+  <header class="text-gray-600 body-font">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-yellow-500 rounded-full" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <span class="ml-3 text-xl">Circle Of Roomies</span>
+      </a>
+      <nav class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center">
+        <a href="/" class="mr-5 hover:text-gray-900">Home</a>
+        <a href= "/#about-section" class="mr-5 hover:text-gray-900">About us</a>
+        <!-- <a href="/gallery" class="mr-5 hover:text-gray-900">Gallery</a> -->
+        <a href= "/#contact-section" class="mr-5 hover:text-gray-900">Contact us</a>
+      </nav>
+      <% if (user_id) { %>
+      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/profile?id=<%= user_id %>">Your profile
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+      <% } else { %>
+      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/login">Login / Register
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+      <% } %>
+    </div>
+  </header>
+  <!--  -->
+
+  <% if (!user_id) { %>
+  <!-- If the user is not logged in -->
+  <section class="bg-yellow-300 text-black body-font" id="login-section">
+    <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
+      <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+        <h1 class="title-font font-medium text-3xl text-black"><b>Login with your existing profile to search for user profiles out there.<br>We are always there to streamline your experience and shower it with smoothness.</b></h1>
+        <p class="leading-relaxed mt-4">We prefer to ask you login first in order to avoid any spam search requests on our application.<br>Don't have a profile, <a href="#signup-section" style="text-decoration: underline;">Sign up now</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+      <div class="flex flex-wrap w-full mb-20">
+        <div class="lg:w-1/2 w-full mb-6 lg:mb-0">
+          <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Here's how to find your Roomie</h1>
+          <div class="h-1 w-20 bg-yellow-500 rounded"></div>
+        </div>
+        <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">Let Circle Of Roomies be a part of your journey in finding your room mates. <br> Here is how we work.</p>
+      </div>
+      <div class="flex flex-wrap -m-4">
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/1e.jpg" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">1. Connect with us</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Set up your profile.</h2>
+            <p class="leading-relaxed text-base">Register with us and set up your profile.       
+            </p>
+          </div>
+        </div>
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/2..png" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">2. Browse</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Look through other users' profiles.</h2>
+            <p class="leading-relaxed text-base">Take your time and browse the profiles of the users registered with us based upon your preffered location.</p>
+          </div>
+        </div>
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/3..jpeg" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">3. Reach out</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Contact the profile you're interested in.</h2>
+            <p class="leading-relaxed text-base">Once you find a profile that fits your needs, contact the person through the mentioned contact details.</p>
+          </div>
+        </div>
+        <div class="xl:w-1/4 md:w-1/2 p-4">
+          <div class="bg-yellow-200 p-6 rounded-lg">
+            <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/4..jpeg" alt="content">
+            <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">4. It's a Match</h3>
+            <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Voila! You've got yourself a room mate</h2>
+            <p class="leading-relaxed text-base">If everything works out well, congratulations on finding a room mate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--  -->
+  <% } %>
+
+  <!-- search section if the user is logged in -->
+  <% if (user_id) { %>
+  <section class="bg-yellow-300 text-black body-font" id="login-section">
+    <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
+      <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+        <h1 class="title-font font-medium text-3xl text-black"><b>Find your roomies</b></h1>
+        <p class="leading-relaxed mt-4">Searching for room mates? We've got you covered.<br>Find the right people, with us.</p>
+      </div>
+      <div class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+        <h2 class="text-gray-900 text-lg font-medium title-font mb-5">Search for name, place, or any keyword</h2>
+        <div class="relative mb-4">
+          <input type="email" id="search-input" class="w-full bg-white rounded border border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Search">
+        </div>
+        
+        <button class="text-black bg-yellow-500 border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg" id="search-btn"><b>Search</b></button>
+      </div>
+    </div>
+  </section>
+
+  <div id="search-results">
+    <section class="text-gray-600 body-font">
+      <div class="container px-5 py-24 mx-auto">
+        <div class="flex flex-wrap w-full mb-20">
+          <div class="lg:w-1/2 w-full mb-6 lg:mb-0">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Here's how to find your Roomie</h1>
+            <div class="h-1 w-20 bg-yellow-500 rounded"></div>
+          </div>
+          <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">Let Circle Of Roomies be a part of your journey in finding your room mates. <br> Here is how we work.</p>
+        </div>
+        <div class="flex flex-wrap -m-4">
+          <div class="xl:w-1/4 md:w-1/2 p-4">
+            <div class="bg-yellow-200 p-6 rounded-lg">
+              <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/1e.jpg" alt="content">
+              <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">1. Connect with us</h3>
+              <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Set up your profile.</h2>
+              <p class="leading-relaxed text-base">Register with us and set up your profile.       
+              </p>
+            </div>
+          </div>
+          <div class="xl:w-1/4 md:w-1/2 p-4">
+            <div class="bg-yellow-200 p-6 rounded-lg">
+              <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/2..png" alt="content">
+              <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">2. Browse</h3>
+              <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Look through other users' profiles.</h2>
+              <p class="leading-relaxed text-base">Take your time and browse the profiles of the users registered with us based upon your preffered location.</p>
+            </div>
+          </div>
+          <div class="xl:w-1/4 md:w-1/2 p-4">
+            <div class="bg-yellow-200 p-6 rounded-lg">
+              <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/3..jpeg" alt="content">
+              <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">3. Reach out</h3>
+              <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Contact the profile you're interested in.</h2>
+              <p class="leading-relaxed text-base">Once you find a profile that fits your needs, contact the person through the mentioned contact details.</p>
+            </div>
+          </div>
+          <div class="xl:w-1/4 md:w-1/2 p-4">
+            <div class="bg-yellow-200 p-6 rounded-lg">
+              <img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/4..jpeg" alt="content">
+              <h3 class="tracking-widest text-yellow-500 text-xs font-medium title-font">4. It's a Match</h3>
+              <h2 class="text-lg text-gray-900 font-medium title-font mb-4">Voila! You've got yourself a room mate</h2>
+              <p class="leading-relaxed text-base">If everything works out well, congratulations on finding a room mate.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <% } %>
+  <!--  -->
+
+  <!-- The footer section -->
+  <footer class="text-gray-600 body-font">
+    <div class="border-t border-gray-200">
+      <div class="container px-5 py-8 flex flex-wrap mx-auto items-center">
+        <span class="inline-flex lg:ml-auto lg:mt-0 mt-6 w-full justify-center md:justify-start md:w-auto">
+          <a class="text-gray-500">
+            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+              <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+            </svg>
+          </a>
+          <a class="ml-3 text-gray-500">
+            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+              <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+            </svg>
+          </a>
+          <a class="ml-3 text-gray-500">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+            </svg>
+          </a>
+          <a class="ml-3 text-gray-500">
+            <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+              <path stroke="none" d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+              <circle cx="4" cy="4" r="2" stroke="none"></circle>
+            </svg>
+          </a>
+        </span>
+      </div>
+    </div>
+    <div class="bg-gray-100">
+      <div class="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+        <p class="text-gray-500 text-sm text-center sm:text-left">© 2023 Cirlce Of Roomies —
+          <a href="https://twitter.com/knyttneve" class="text-gray-600 ml-1" target="_blank" rel="noopener noreferrer">@shubhamsingh, @siddhisingh</a>
+        </p>
+        <span class="sm:ml-auto sm:mt-0 mt-2 sm:w-auto w-full sm:text-left text-center text-gray-500 text-sm">Live a happy hostel life!</span>
+      </div>
+    </div>
+  </footer>
+  <!-- -->
+
+</body>
+</html> -->

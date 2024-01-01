@@ -24,8 +24,8 @@
         <!-- <a href="/gallery" class="mr-5 hover:text-gray-900">Gallery</a> -->
         <a href= "/#contact-section" class="mr-5 hover:text-gray-900">Contact us</a>
       </nav>
-      <% if (data.user_id) { %>
-      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/profile?id=<%= data.user_id %>">Your profile
+      <% if (user_id) { %>
+      <a class="inline-flex items-center bg-yellow-500 text-white border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" href="/profile?id=<%= user_id %>">Your profile
         <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
           <path d="M5 12h14M12 5l7 7-7 7"></path>
         </svg>
@@ -52,10 +52,12 @@
           <br>Find the right people, with us.</p>
           <div class="flex w-full md:justify-start justify-center items-end">
             <div class="relative mr-4 lg:w-full xl:w-1/2 w-2/4">
-              <label for="hero-field" class="leading-7 text-sm text-gray-600"></label>
-              <input type="text" id="hero-field" placeholder="Search Place" name="hero-field" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-200 focus:bg-transparent focus:border-yellow-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-            </div>
-            <button class="inline-flex text-white bg-yellow-500 border-0 py-2 px-6 focus:outline-none hover:bg-yellow-600 rounded text-lg">Search</button>
+              <form action="/search/place" method="get">
+                <label for="q" class="leading-7 text-sm text-gray-600"></label>
+                <input type="text" placeholder="Search Place" name="q" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:ring-2 focus:ring-yellow-200 focus:bg-transparent focus:border-yellow-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" required>
+              </div>
+              <button type="submit" class="inline-flex text-white bg-yellow-500 border-0 py-2 px-6 focus:outline-none hover:bg-yellow-600 rounded text-lg">Search</button>
+            </form>
           </div>
           <p class="text-sm mt-2 text-gray-500 mb-8 w-full"></p>
           <div class="flex lg:flex-row md:flex-col">            
@@ -135,8 +137,8 @@
       <div class="container px-5 py-24 mx-auto">
         <div class="lg:w-2/3 flex flex-col sm:flex-row sm:items-center items-start mx-auto">
           <h1 class="flex-grow sm:pr-16 text-2xl font-medium title-font text-gray-900">Can't find a room mate? We've got you covered.<br> Click the button to get started</h1>
-          <% if (data.user_id) { %>
-          <a class="flex-shrink-0 text-black bg-white border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg mt-10 sm:mt-0" href="/profile"><b>Find</b></a>
+          <% if (user_id) { %>
+          <a class="flex-shrink-0 text-black bg-white border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg mt-10 sm:mt-0" href="/search"><b>Find</b></a>
           <% } else { %>
           <a class="flex-shrink-0 text-black bg-white border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg mt-10 sm:mt-0" href="/login"><b>Register</b></a>
           <% } %>
@@ -262,7 +264,7 @@
     <div id="about-section">
       <section class=" bg-yellow-300 text-black body-font">
         <div class="container mx-auto flex px-5 py-24 items-center justify-center flex-col">
-          <img class="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded" alt="hero" src="/media/room mates.jpg">
+          <img class="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded" alt="..." src="/media/roommates.jpg">
           <div class="text-center lg:w-2/3 w-full">
             <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-Black">About Us</h1>
             <p class="mb-8 leading-relaxed">Circle Of Roomies is an up and coming home rental network for finding and renting furnished rooms and furnished shared houses in popular cities. <br>
@@ -446,5 +448,8 @@
   </footer>
   <!-- -->
 
+  <!-- The required javascript -->
+  <script type="text/javascript" src="/js/basic.js"></script>
+  <!--  -->
 </body>
 </html>
