@@ -75,8 +75,7 @@ App.get("/profile", (request, response) => {
 		DbConnection.get("SELECT * FROM Users WHERE id = ?;", [request.query.id], (error, row) => {
 			if (error) {
 				// If there occurs an error
-				response.status(500);
-				return response.end("Failed to load the profile");
+				return response.status(500).end("Failed to load the profile!");
 			}
 
 			if (row) {
@@ -84,8 +83,7 @@ App.get("/profile", (request, response) => {
 				return response.render("profile", { profile: row, user_id: request.session.user_id, });
 			} else {
 				// If the user isn't found
-				response.status(404);
-				return response.end("No such user found!");
+				return response.status(404).end("No such user found!");
 			}
 		});
 	}
@@ -97,8 +95,7 @@ App.get("/profile/edit", (request, response) => {
 		DbConnection.get("SELECT * FROM Users WHERE id = ?;", [request.session.user_id], (error, row) => {
 			if (error) {
 				// If there occurs an error
-				response.status(500);
-				return response.end("Failed to load the profile");
+				return response.status(500).end("Failed to load the profile!");
 			}
 
 			if (row) {
@@ -123,7 +120,32 @@ App.get("/search", (request, response) => {
 		// Checking if the search query is provided or not
 		if (request.query.q) {
 		  // Searching in the database using the query provided
-			request.query.q = request.query.q.split();
+		  request.query.q = request.query.q.toLocaleLowerCase().split();
+		  if (request.query.q.length > 0) {
+		  	// Generating the SQL search query
+		  	let sql_query = `SELECT * FROM Users WHERE `;
+		  	for (let i = 0; i < request.query.q.length; i++) {
+		  		sql_query += `LOWER(name) LIKE "%${request.query.q[i]}%" OR LOWER(city) LIKE "%${request.query.q[i]}%" OR LOWER(state) LIKE "%${request.query.q[i]}%" OR LOWER(bio) LIKE "%${request.query.q[i]}%"`;
+		  		if (request.query.q[i+1] == null)
+		  			sql_query += `;`;
+		  		else
+		  			sql_query += ` OR `;
+		  	}
+
+		  	// Fetching the results from the database
+		  	DbConnection.all(sql_query, [], (error, rows) => {
+		  		if (error) {
+		  			// If there occurs an error
+		  			return response.status(500).json({ results: [], user_id: request.session.user_id, });
+		  		} else {
+		  			// Returning back the fetched details
+		  			return response.json({ results: rows, user_id: request.session.user_id, })
+		  		}
+		  	});
+		  } else {
+		  	// Returning an empty result when the seach keywords are empty
+		  	return response.json({ results: [], user_id: request.session.user_id, });
+		  }
 		} else {
 			return response.render("search", { results: null, user_id: request.session.user_id, });
 		}
@@ -138,8 +160,7 @@ App.get("/search", (request, response) => {
 App.post('/', (request, response) => {
 	if (!request.session.isLoggedIn) {
 		// If the user isn't logged in
-		response.status(403);
-		return response.end("Forbidden!");
+		return response.status(403).end("Forbidden!");
 	}
 
 	// Executing as per the task
@@ -152,8 +173,7 @@ App.post('/', (request, response) => {
 		DbConnection.run("INSERT INTO Ratings (user_id, score, content) VALUES (?, ?, ?);", [request.session.user_id, score, content], (error) => {
 			if (error) {
 				// if there occurs an error
-				response.status(500);
-				return response.end("Database error!");
+				return response.status(500).end("Database error!");
 			}
 
 			return response.end("Review sent successfully!");
@@ -173,8 +193,7 @@ App.post("/login", (request, response) => {
 	DbConnection.get("SELECT * FROM Users WHERE email = ?;", [request.body.email], (error, row) => {
 		if (error) {
 			// If there occurs an error
-			response.status(500);
-			return response.end("Database error!");
+			return response.status(500).end("Database error!");
 		}
 
 		if (!row) {
@@ -186,7 +205,10 @@ App.post("/login", (request, response) => {
 			// If the password matches
 			request.session.isLoggedIn = true;
 			request.session.user_id = row.id;
-			return response.end("User logged in successfully");
+			return response.end("User logged in successfully!");
+		} else {
+			// If the password doesn't matches
+			return response.end("Incorrect password!");
 		}
 	});
 });
@@ -194,7 +216,7 @@ App.post("/login", (request, response) => {
 App.post("/signup", (request, response) => {
 	if (request.session.isLoggedIn) {
 		// If the user is already logged in
-		return response.status(403);
+		return response.status(403).end("User already logged in!");
 	}
 
 	// Creating an user account
@@ -203,9 +225,7 @@ App.post("/signup", (request, response) => {
 	DbConnection.get("SELECT COUNT(*) FROM Users WHERE email = ?", [request.body.email], (error, row) => {
 		if (error) {
 			// If there occurs an error
-			response.status(500);
-			throw error;
-			return response.end("Database error!");
+			return response.status(500).end("Database error!");
 		}
 
 		if (row["COUNT(*)"] > 0) {
@@ -216,9 +236,7 @@ App.post("/signup", (request, response) => {
 			DbConnection.run("INSERT INTO Users (name, password, email, city, state, social_link) VALUES (?, ?, ?, ?, ?, ?)", [request.body.name, request.body.password, request.body.email, request.body.city, request.body.state, request.body.social], (error) => {
 				if (error) {
 					// If there occurs an error
-					response.status(500);
-					throw error;
-					return response.end("Database error!");
+					return response.status(500).end("Database error!");
 				} else {
 					return response.end("Created user account successfully! Please login with your respective email and password.");
 				}
@@ -229,16 +247,14 @@ App.post("/signup", (request, response) => {
 //
 App.post("/profile/edit", (request, response) => {
 	if (!request.session.isLoggedIn) {
-		response.status(403);
-		return response.end("Forbidden!");
+		return response.status(403).end("Forbidden!");
 	}
 
 	// Saving the updated information into the database
 	DbConnection.run("UPDATE Users SET name = ?, city = ?, state = ?, social_link = ?, bio = ? WHERE id = ?;", [request.body.name, request.body.city, request.body.state, request.body.social, request.body.bio, request.session.user_id], (error) => {
 		if (error) {
 			// If there occurs an error
-			response.status(500);
-			return response.end("Database error!");
+			return response.status(500).end("Database error!");
 		} else {
 			return response.end("Your profile has been updated!");
 		}
@@ -250,7 +266,6 @@ App.post("/profile/pfp", PfpUpload.single("pfp"), async (request, response) => {
 		// Uploading the file as profile picture
 		const filename = Date.now() + "user" + request.session.user_id;
 		await Sharp(request.file.buffer).resize({ width: 100, height: 100 }).jpeg().toFile(__dirname + "/static/media/pfp/" + filename);
-		console.log("file uploaded!");
 
 		// Saving the updated information in the databse
 		DbConnection.run("UPDATE Users SET pfp = ? WHERE id = ?;", [filename, request.session.user_id], (error) => {
@@ -263,8 +278,6 @@ App.post("/profile/pfp", PfpUpload.single("pfp"), async (request, response) => {
 		});
 	} catch (error) {
 		// If there occurs an error
-		throw error;
-		console.log("file upload failed!");
 		return response.status(500).end("Failed to update the profile picture!");
 	}
 });

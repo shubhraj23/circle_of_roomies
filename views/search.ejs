@@ -43,7 +43,7 @@
 
   <% if (!user_id) { %>
   <!-- If the user is not logged in -->
-  <section class="bg-yellow-300 text-black body-font" id="login-section">
+  <section class="bg-yellow-300 text-black body-font">
     <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
       <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
         <h1 class="title-font font-medium text-3xl text-black"><b>Login with your existing profile to search for user profiles out there.<br>We are always there to streamline your experience and shower it with smoothness.</b></h1>
@@ -103,7 +103,7 @@
 
   <!-- search section if the user is logged in -->
   <% if (user_id) { %>
-  <section class="bg-yellow-300 text-black body-font" id="login-section">
+  <section class="bg-yellow-300 text-black body-font">
     <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
       <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
         <h1 class="title-font font-medium text-3xl text-black"><b>Find your roomies</b></h1>
@@ -111,11 +111,12 @@
       </div>
       <div class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
         <h2 class="text-gray-900 text-lg font-medium title-font mb-5">Search for name, place, or any keyword</h2>
-        <div class="relative mb-4">
-          <input type="email" id="search-input" class="w-full bg-white rounded border border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Search">
-        </div>
-        
-        <button class="text-black bg-yellow-500 border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg" id="search-btn"><b>Search</b></button>
+        <form action="/search" method="get">
+          <div class="relative mb-4">
+            <input type="text" name="q" class="w-full bg-white rounded border border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Search keyword">
+          </div>
+          <button class="text-black bg-yellow-500 border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg" id="search-btn"><b>Search</b></button>
+        </form>
       </div>
     </div>
   </section>
