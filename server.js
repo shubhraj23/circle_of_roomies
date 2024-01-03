@@ -245,6 +245,18 @@ App.post("/signup", (request, response) => {
 	});
 });
 //
+App.post("/logout", (request, response) => {
+	if (request.session.isLoggedIn) {
+		// If the user is logged in, then we log out
+		request.session.user_id = null;
+		request.session.isLoggedIn = false;
+		return response.end("User logged out successfully!");
+	} else {
+		// If the user isn't logged in
+		return response.status(403).end("No valid login session was found!");
+	}
+});
+//
 App.post("/profile/edit", (request, response) => {
 	if (!request.session.isLoggedIn) {
 		return response.status(403).end("Forbidden!");

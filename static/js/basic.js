@@ -54,3 +54,31 @@ const Encrypter = {
 		return btoa(result);
 	}
 }
+
+// Adding the onclick event listener to the logout-btn
+try {
+	document.getElementById("logout-btn").addEventListener("click", (event) => {
+		// Preventing the default onclick action
+		event.preventDefault();
+
+		// Sending the HTTT POST request to server
+		fetch("/logout", {
+			method: "POST",
+			body: JSON.stringify({}),
+			headers: { "Content-type": "application/json; charset=UTF-8", }
+		}).then(response => {
+			if (response.ok) {
+				return response.text()
+			} else {
+				// If there occurs an error
+				return "Failed to log out the user!";
+			}
+		}).then(response => {
+			alert(response);
+			window.location.reload();
+		});
+	});
+} catch(error) {
+	// Displaying the error via the alert
+	// pass
+}
