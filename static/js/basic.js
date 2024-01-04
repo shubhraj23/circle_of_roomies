@@ -79,6 +79,6 @@ try {
 		});
 	});
 } catch(error) {
-	// Displaying the error via the alert
+	// If there occurs an error
 	// pass
 }
