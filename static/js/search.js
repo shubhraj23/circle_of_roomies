@@ -30,13 +30,13 @@ try {
 			} else {
 				// Iterating through each response and creating the HTML card out of them
 				response.results.forEach((element) => {
-					result += `<div class="xl:w-1/4 md:w-1/2 p-4" id="profileid-${element.id}"><div class="bg-yellow-200 p-6 rounded-lg">`;
+					result += `<div class="xl:w-1/4 md:w-1/2 p-4" id="profileid-${element.id}"><div class="bg-yellow-300 p-6 rounded-lg">`;
 	        if (element.pfp) {
 	        	result += `<img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/pfp/${element.pfp}" alt="pfp">`;
 	        } else {
 	        	result += `<img class="h-40 rounded w-full object-cover object-center mb-6" src="/media/blank_pfp.jpg" alt="pfp">`;
 	        }
-	       	result += `<h2 class="text-lg text-gray-900 font-medium title-font mb-4">${element.name}</h2><p class="leading-relaxed text-base">${element.city}, ${element.state}</p></div></div>`
+	       	result += `<h2 class="text-lg text-gray-900 font-medium title-font mb-4">${element.name}</h2><p class="leading-relaxed text-base">${element.city}, ${element.state}</p><br><a class="flex-shrink-0 text-black bg-white border-0 py-2 px-8 focus:outline-none hover:bg-yellow-600 rounded text-lg mt-10 sm:mt-0" href="/profile?id=${element.id}">View</autton></div></div>`
 				});
 			}
 

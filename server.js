@@ -7,6 +7,7 @@ Author: Rishav Das (github.com/r1shavd/)
 */
 
 // Importing the required modules
+require("dotenv").config();
 const Express = require("express");
 const ExpressSession = require("express-session");
 const BodyParser = require("body-parser");
@@ -21,6 +22,9 @@ App.use(BodyParser.urlencoded({ extended: true, limit: "5mb", parameterLimit: 50
 App.use(BodyParser.json({ limit: "5mb", }));
 App.use(ExpressSession({secret: '15265126735vdfghdsf35hgdfhgsdf53624', resave: true, saveUninitialized: true}));
 App.use(Express.static("static")); // Configuring the static files (CSS, JS, Media)
+
+// Setting the port where the app is to be hosted
+const Port = process.env.PORT;
 
 // Connecting to the databse
 const DbConnection = new Sqlite3.Database("database.db", (error) => {
@@ -296,4 +300,4 @@ App.post("/profile/pfp", PfpUpload.single("pfp"), async (request, response) => {
 //
 
 // Making the app to listen on port 3000
-App.listen(3000, () => console.log("[#] Listening on port 3000"));
+App.listen(Port, () => console.log(`[#] Listening on port ${Port}`));
